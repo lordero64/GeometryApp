@@ -18,6 +18,7 @@ public class GeometryApplication {
         System.out.println("  Радиус: " + circle.getRadius());
         System.out.println("  Площадь: " + circle.getArea());
         System.out.println("  Периметр: " + circle.getPerimeter());
+        System.out.println("  Диаметр: " + circle.getDiameter());
         System.out.println();
 
         // Выводим информацию о прямоугольнике
