@@ -3,82 +3,82 @@ package com.app;
 import com.geometry.Circle;
 import com.geometry.Rectangle;
 import com.geometry.Triangle;
-import com.utils.GeometryComparator;
-import com.utils.GeometryConverter;
+import com.geometry.threed.Cube;
+import com.geometry.threed.Cylinder;
+import com.geometry.threed.Sphere;
+import com.geometry.threed.ThreeDUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class GeometryApplication {
     public static void main(String[] args) {
-        System.out.println("=== ГЕОМЕТРИЧЕСКИЕ ФИГУРЫ ===\n");
+        System.out.println("=== ГЕОМЕТРИЧЕСКИЕ ФИГУРЫ (2D и 3D) ===\n");
 
-        // Создаем фигуры в сантиметрах
-        Circle circle = new Circle(500); // радиус 500 см = 5 м
-        Rectangle rectangle = new Rectangle(400, 600); // 400x600 см = 4x6 м
-        Triangle triangle = new Triangle(300, 400, 500); // 3,4,5 м в см
+        // 2D фигуры
+        System.out.println("--- ДВУХМЕРНЫЕ ФИГУРЫ ---");
+        Circle circle = new Circle(5);
+        Rectangle rectangle = new Rectangle(4, 6);
+        Triangle triangle = new Triangle(3, 4, 5);
 
-        System.out.println("ИСХОДНЫЕ ФИГУРЫ (в см):");
-        printFigureInfo(circle, rectangle, triangle);
+        print2DInfo(circle, rectangle, triangle);
 
-        // Используем GeometryConverter для конвертации в метры
-        System.out.println("\n=== КОНВЕРТАЦИЯ В МЕТРЫ (GeometryConverter) ===");
-        Circle circleM = GeometryConverter.circleCmToM(circle);
-        Rectangle rectangleM = GeometryConverter.rectangleCmToM(rectangle);
-        Triangle triangleM = GeometryConverter.triangleCmToM(triangle);
+        // 3D фигуры (новая функциональность)
+        System.out.println("\n--- ТРЕХМЕРНЫЕ ФИГУРЫ (версия 1.0.0-SNAPSHOT) ---");
+        Sphere sphere = new Sphere(5);
+        Cube cube = new Cube(4);
+        Cylinder cylinder = new Cylinder(3, 7);
 
-        System.out.println("Фигуры в метрах:");
-        System.out.printf("  Круг: радиус = %.2f м, площадь = %.2f м²%n",
-                circleM.getRadius(), circleM.getArea());
-        System.out.printf("  Прямоугольник: %.2f x %.2f м, площадь = %.2f м²%n",
-                rectangleM.getWidth(), rectangleM.getHeight(), rectangleM.getArea());
-        System.out.printf("  Треугольник: стороны = %.2f, %.2f, %.2f м, площадь = %.2f м²%n",
-                triangleM.getSideA(), triangleM.getSideB(), triangleM.getSideC(), triangleM.getArea());
+        print3DInfo(sphere, cube, cylinder);
 
-        // Используем GeometryComparator для сортировки
-        System.out.println("\n=== СОРТИРОВКА ФИГУР (GeometryComparator) ===");
+        // Сравнение 3D фигур
+        System.out.println("\n=== СРАВНЕНИЕ 3D ФИГУР ===");
 
-        List<Object> shapes = new ArrayList<>();
-        shapes.add(circle);
-        shapes.add(rectangle);
-        shapes.add(triangle);
+        List<Object> shapes3d = new ArrayList<>();
+        shapes3d.add(sphere);
+        shapes3d.add(cube);
+        shapes3d.add(cylinder);
 
-        System.out.println("По площади (возрастание):");
-        Collections.sort(shapes, new GeometryComparator.ByArea());
-        for (Object shape : shapes) {
-            System.out.printf("  %s: площадь = %.2f%n",
-                    shape.getClass().getSimpleName(), getArea(shape));
+        System.out.println("По объему (возрастание):");
+        shapes3d.sort((o1, o2) -> ThreeDUtils.compareByVolume(o1, o2));
+        for (Object shape : shapes3d) {
+            System.out.printf("  %s: объем = %.2f%n",
+                    shape.getClass().getSimpleName(), ThreeDUtils.getVolume(shape));
         }
 
-        System.out.println("\nПо периметру (возрастание):");
-        Collections.sort(shapes, new GeometryComparator.ByPerimeter());
-        for (Object shape : shapes) {
-            System.out.printf("  %s: периметр = %.2f%n",
-                    shape.getClass().getSimpleName(), getPerimeter(shape));
+        System.out.println("\nПо площади поверхности (возрастание):");
+        shapes3d.sort((o1, o2) -> ThreeDUtils.compareBySurfaceArea(o1, o2));
+        for (Object shape : shapes3d) {
+            System.out.printf("  %s: площадь поверхности = %.2f%n",
+                    shape.getClass().getSimpleName(), ThreeDUtils.getSurfaceArea(shape));
         }
     }
 
-    private static void printFigureInfo(Circle c, Rectangle r, Triangle t) {
-        System.out.printf("  Круг: радиус = %.2f см, площадь = %.2f см², периметр = %.2f см%n",
+    private static void print2DInfo(Circle c, Rectangle r, Triangle t) {
+        System.out.println("Круг:");
+        System.out.printf("  Радиус: %.2f, площадь: %.2f, периметр: %.2f%n",
                 c.getRadius(), c.getArea(), c.getPerimeter());
-        System.out.printf("  Прямоугольник: %.2f x %.2f см, площадь = %.2f см², периметр = %.2f см%n",
+
+        System.out.println("Прямоугольник:");
+        System.out.printf("  Ширина: %.2f, высота: %.2f, площадь: %.2f, периметр: %.2f%n",
                 r.getWidth(), r.getHeight(), r.getArea(), r.getPerimeter());
-        System.out.printf("  Треугольник: стороны = %.2f, %.2f, %.2f см, площадь = %.2f см², периметр = %.2f см%n",
+
+        System.out.println("Треугольник:");
+        System.out.printf("  Стороны: %.2f, %.2f, %.2f, площадь: %.2f, периметр: %.2f%n",
                 t.getSideA(), t.getSideB(), t.getSideC(), t.getArea(), t.getPerimeter());
     }
 
-    private static double getArea(Object shape) {
-        if (shape instanceof Circle) return ((Circle) shape).getArea();
-        if (shape instanceof Rectangle) return ((Rectangle) shape).getArea();
-        if (shape instanceof Triangle) return ((Triangle) shape).getArea();
-        return 0;
-    }
+    private static void print3DInfo(Sphere s, Cube c, Cylinder cy) {
+        System.out.println("Сфера:");
+        System.out.printf("  Радиус: %.2f, объем: %.2f, площадь поверхности: %.2f%n",
+                s.getRadius(), s.getVolume(), s.getSurfaceArea());
 
-    private static double getPerimeter(Object shape) {
-        if (shape instanceof Circle) return ((Circle) shape).getPerimeter();
-        if (shape instanceof Rectangle) return ((Rectangle) shape).getPerimeter();
-        if (shape instanceof Triangle) return ((Triangle) shape).getPerimeter();
-        return 0;
+        System.out.println("Куб:");
+        System.out.printf("  Сторона: %.2f, объем: %.2f, площадь поверхности: %.2f, диагональ: %.2f%n",
+                c.getSide(), c.getVolume(), c.getSurfaceArea(), c.getSpaceDiagonal());
+
+        System.out.println("Цилиндр:");
+        System.out.printf("  Радиус: %.2f, высота: %.2f, объем: %.2f, площадь поверхности: %.2f%n",
+                cy.getRadius(), cy.getHeight(), cy.getVolume(), cy.getSurfaceArea());
     }
 }
